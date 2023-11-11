@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <title> Issue Tracker System</title>
+ 
+    <style>
+    
+        form{
+            color: rgb(0, 0, 0);
+            position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.3)) ;
+    width: 480px;
+    padding: 50px 50px;
+    border-radius: 10px;
+    box-shadow: 7px 7px 60px rgb(92, 91, 91);
+        }
+
+        /* #issueList {
+            margin-top: 20px;
+        }
+
+        .issue {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        } */
+    </style>
+</head>
+<body>
+
+    <h2>Enhanced Issue Tracker</h2>
+
+    <form   action="issue.php" method="post" style="text-align: center;"  id="addIssueForm">
+  
+        <label for="issueid">Issue Id:</label>
+        <input type="text" id="issueid"  name ="id" required>
+  
+        <br>
+        <br>
+               
+
+        <label for="issue">Issue:</label>
+        <input type="text" id="issue" name="issue" required>
+      
+        <br>
+<br>
+      <label for="issueDescription">Issue Description:</label>
+        <input type="text" id="issueDescription" name="desciption" required>
+        </div>
+        <br>
+        <br>
+
+        <label for="priority" name ="priorities">Priority:</label>
+        <select id="priority">
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+        </select>
+        <br>
+        <br>  
+        <label for="department">Department:</label>
+        <input type="text" id="department" name="department" required>
+        <br>
+        <br>  
+        <label for="status" name="status" >Status:</label>
+        <select id="status">
+            <option value="open">Open</option>
+            <option value="closed">Closed</option>
+        </select>
+        
+           <br>
+           <br> 
+        <label for="open" >Opened On:</label>
+        <input type="text" id="open" name="open"    placeholder="Enter responsible ..">
+         <br>
+        <br>
+        <label for="close" >closed On:</label>
+        <input type="text" id="close" name="open"   placeholder="Enter responsible ..">  
+       <br>
+        <br>
+         <label  for="file" >Select a file:</label>
+        <input  type="file" name="file"  id="file" placeholder="Enter responsible ..">
+        <br>
+        <br>
+  <button type="button" onclick="addIssue()">Add Issue</button>
+    </form>
+
+    <div id="issueList"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var issues = [];
+
+            // Display existing issues
+            displayIssues();
+
+            // Function to add a new issue
+            window.addIssue = function () {
+                var id = document.getElementById('issueid').value;
+                var issue  = document.getElementById('issue').value;
+                var description = document.getElementById('issueDescription').value;
+                var priority = document.getElementById('priority').value;
+                var department = document.getElementById('department').value;
+                var status = document.getElementById('status').value;
+                var open = document.getElementById('open').value;
+                var close = document.getElementById('close').value;
+                var file = document.getElementById('file').value;
+
+
+                if (id && issue && description && priority && department && status && open && close && file) {
+                    var newIssue = {
+                        id: generateUniqueId(),
+                        issue: issue,
+                        description: description,
+                        priority: priority,
+                        department: department,
+                        status: status,
+                        open:open,
+                        close:close,
+                        file:file
+                    };
+
+                    issues.push(newIssue);
+                    displayIssues();
+                    clearForm();
+                }
+            };
+
+            // Function to display issues
+            function displayIssues() {
+                var issueList = document.getElementById('issueList');
+                issueList.innerHTML = '';
+
+                issues.forEach(function (issue) {
+                    var issueDiv = document.createElement('div');
+                    issueDiv.classList.add('issue');
+                    issueDiv.innerHTML = `
+                        <div>
+                            <strong>id:</strong> ${issue.id}<br>
+                            <strong>issue:</strong> ${issue.issue}<br>
+                            <strong>Description:</strong> ${issue.description}<br>
+                            <strong>Priority:</strong> ${issue.priority}<br>
+                            <strong>Department:</strong> ${issue.department}<br>
+                            <strong>Status:</strong> ${issue.status}<br>
+                            <strong>open:</strong> ${issue.open}<br>
+                            <strong>close:</strong> ${issue.close}<br>
+                            <strong>file:</strong> ${issue.file}
+
+                        </div>
+                        <div class="actions">
+                            <button style="height:50px; weight:50%;" onclick="deleteIssue(${issue.id})">Delete</button>
+                        </div>
+                    `;
+                    issueList.appendChild(issueDiv);
+                });
+            }
+
+            // Function to delete an issue
+            window.deleteIssue = function (id) {
+                issues = issues.filter(function (issue) {
+                    return issue.id !== id;
+                });
+                displayIssues();
+            };
+
+            // Function to generate a unique ID for new issues
+            function generateUniqueId() {
+                return Math.floor(Math.random() * Date.now());
+            }
+
+            // Function to clear the form
+            function clearForm() {
+                document.getElementById('issueid').value = '';
+                document.getElementById('issue').value = '';
+                document.getElementById('issueDescription').value = '';
+                document.getElementById('priority').value = 'low';
+                document.getElementById('department').value = '';
+                document.getElementById('status').value = 'open';
+                document.getElementById('open').value = '';
+                document.getElementById('close').value = '';
+                document.getElementById('status').value = 'file';
+
+            }
+        });
+        $(document).ready(function() {
+    // When the document is ready, make an AJAX request to get data from PHP
+    $.ajax({
+        url: 'create_issue.php',
+        method: 'GET',
+        success: function(data) {
+            // Display the data in the 'data-container' div
+            $('#data-container').html(data);
+        },
+        error: function(error) {
+            console.error('Error fetching data:', error);
+        }
+    });
+});
+
+     
+    </script>
+  
+</body>
+</html>
